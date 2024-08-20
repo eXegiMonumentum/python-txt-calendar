@@ -1,7 +1,8 @@
 import datetime
 import calendar
 import os
-
+#I imported the variable from the main file
+from main import base_path
 
 class FileCreator:
 
@@ -12,7 +13,7 @@ class FileCreator:
     current_month_int = int(datetime.datetime.now().strftime("%m"))
     current_year_int = int(datetime.datetime.now().strftime("%Y"))
 
-    def __init__(self, base_path=r"C:\Users\LENOVO\Desktop\first_project_planner\project_1\created_planner", current_month=False):
+    def __init__(self, current_month=False):
         self.base_path = base_path
         self.current_month = current_month
         self.__month_number = None

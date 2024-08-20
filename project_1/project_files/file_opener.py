@@ -2,8 +2,8 @@ from file_creator import FileCreator
 import os
 class FileOpener(FileCreator):
 
-    def __init__(self, base_path= r"C:\Users\LENOVO\Desktop\first_project_planner\project_1\created_planner", current_month=None):
-        super().__init__(base_path, current_month)
+    def __init__(self, current_month=None):
+        super().__init__(current_month)
         self.f_paths = self.create_paths_for_days_txt_files()
         self.todays_path = self.f_paths[self.current_day_int - 1]
 

@@ -4,8 +4,8 @@ from file_opener import FileOpener
 
 class FileWriter(FileOpener):
 
-    def __init__(self, base_path=r"C:\Users\LENOVO\Desktop\first_project_planner\project_1\created_planner", current_month=False):
-        super().__init__(base_path, current_month)
+    def __init__(self, current_month=False):
+        super().__init__(current_month)
         self.duties_list = []
 
     def __write_lines_to_file(self, added_lines_list, file_content_list):
