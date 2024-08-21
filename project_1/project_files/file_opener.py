@@ -1,5 +1,7 @@
 from file_creator import FileCreator
 import os
+
+
 class FileOpener(FileCreator):
 
     def __init__(self, current_month=None):
@@ -11,7 +13,7 @@ class FileOpener(FileCreator):
         if self.current_month is not True:
             raise ValueError(f"Function read today's file only supports opening today's file when current_month=True.")
 
-        print("It's today's file content:\n",20*"-")
+        print("It's today's file content:\n", 20 * "-")
         file_content_list = []
         try:
             with open(self.todays_path, 'r', encoding='UTF-8') as f:
@@ -19,8 +21,8 @@ class FileOpener(FileCreator):
                 for i, line in enumerate(file_content.split("\n")):
                     if line:
                         file_content_list.append(line.strip())
-                        print(f'line {i+1}: {line}')
-                print(20*"-")
+                        print(f'line {i + 1}: {line}')
+                print(20 * "-")
                 return file_content_list
         except FileNotFoundError as e:
             print(f"Error opening file: {e}")
@@ -53,7 +55,7 @@ class FileOpener(FileCreator):
                     # if file_content:
                     file_content = file_content.strip()
                     file_content = file_content.split("\n")
-                    print(10*"-", "Day" ,file_path[-12:-10], 10*"-", )
+                    print(10 * "-", "Day", file_path[-12:-10], 10 * "-", )
                     for i, line in enumerate(file_content, start=1):
                         if line:
                             print(f'{i}. {line}')
@@ -83,4 +85,3 @@ class FileOpener(FileCreator):
                 print(f"File operation failed due to system-related errors.: {e}")
 
         return f_content_dict
-

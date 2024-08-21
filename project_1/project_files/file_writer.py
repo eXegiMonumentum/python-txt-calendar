@@ -15,11 +15,10 @@ class FileWriter(FileOpener):
                     if line not in file_content_list:
                         f.write(line + '\n')
                 print(f"{line} was written to a file {self.todays_path}\n")
-        except OSError:
-            print("File operation failed due to system-related errors.")
-
         except FileNotFoundError as e:
             print(f"wrong path: {e}")
+        except OSError:
+            print("File operation failed due to system-related errors.")
 
     def __delete_lines_from_file(self):
         file_content_list = self.read_todays_file()

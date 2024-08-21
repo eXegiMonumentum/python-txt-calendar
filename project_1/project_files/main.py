@@ -2,42 +2,6 @@ from file_creator import FileCreator
 from file_opener import FileOpener
 from file_writer import FileWriter
 from pprint import pprint
-from pathlib import Path
-
-
-def validate_directory_path(path_str):
-    """
-    Validate if the given path is a directory and exists.
-
-    :param path_str: Path to validate
-    :return: A message indicating the result of validation
-    """
-    path = Path(path_str)
-    if not path.exists():
-        return f"Path '{path_str}' doesn't exist."
-
-    if not path.is_dir():
-        return f"The path '{path_str}' exists, but it's not a directory."
-
-    return f"Path '{path_str}' is correct and it's a directory."
-
-
-def get_valid_directory_path():
-    """
-    Prompts the user to enter a directory path and validates it.
-
-    :return: A valid directory path
-    """
-    while True:
-        base_path = input(
-            "Enter the absolute path to your directory, where you want to create the Python planner: ")
-        validation_message = validate_directory_path(base_path)
-        print(validation_message)
-
-        if "correct and it's a directory" in validation_message:
-            return base_path
-        else:
-            print("Please enter a valid directory path.")
 
 
 def get_user_choice():
@@ -58,9 +22,6 @@ def get_user_choice():
 
 
 def main():
-    # Get and validate directory path
-    base_path = get_valid_directory_path()
-
     # Display menu options
     print("1: Create txt files for chosen month")
     print("2: Write something to today's file")
@@ -76,7 +37,9 @@ def main():
         c_files.create_txt_files_for_chosen_month()
 
     elif choice == 2:
+        print("HEREEE")
         w_files = FileWriter(current_month=True)
+        print(" HERE")
         w_files.file_content_management()
         w_files.read_todays_file()
 
@@ -91,6 +54,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-# zmiana w projekcie:
-# naprawię import error,- zmienną w file creator,-nie ma tej zmiennej w main.

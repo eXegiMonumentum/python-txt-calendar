@@ -1,11 +1,14 @@
+from path_validator import PathValidator
 import datetime
 import calendar
 import os
-#I imported the variable from the main file
-from main import base_path
+
+# Get and validate directory path
+
+
 
 class FileCreator:
-
+    base_path = None
     weeks_range = []
     chosen_month = datetime.datetime.now().strftime("%B")
 
@@ -13,10 +16,20 @@ class FileCreator:
     current_month_int = int(datetime.datetime.now().strftime("%m"))
     current_year_int = int(datetime.datetime.now().strftime("%Y"))
 
+
     def __init__(self, current_month=False):
-        self.base_path = base_path
         self.current_month = current_month
         self.__month_number = None
+        self.__initialize_base_path()
+
+
+    def __initialize_base_path(self):
+        """Inicjalizacja base_path na poziomie klasy tylko wtedy, gdy jest potrzebna"""
+        if self.base_path is None:
+            path_valid = PathValidator()
+            FileCreator.base_path = path_valid.get_valid_directory_path()
+
+
     def __divide_chosen_month_to_weeks(self):
         """Creating a list of weeks for the chosen month,
          where the 0th index represents Monday, the 1st index represents Tuesday, and so on.
@@ -38,7 +51,8 @@ class FileCreator:
             for i, month in enumerate(months, start=1):
                 print(f'{i:2}, --> {month}')
             try:
-                self.__month_number = int(input(f"Enter the month number (1 to 12) of {self.current_year_int}r. you would like to chose: "))
+                self.__month_number = int(
+                    input(f"Enter the month number (1 to 12) of {self.current_year_int}r. you would like to chose: "))
                 if self.__month_number not in range(1, 13):
                     raise ValueError("Month number must be between 1 and 12")
             except:
@@ -64,10 +78,8 @@ class FileCreator:
         self.__class__.chosen_month = chosen_month
         return chosen_month, weeks_range
 
-
     def creating_chosen_month_and_weeks_directionaries(self):
         """Creating directories for chosen month and separated into weeks"""
-
         chosen_month, weeks_range = self.__get_weeks_range()
         chosen_month_directory = os.path.join(self.base_path, chosen_month)
         os.makedirs(chosen_month_directory, exist_ok=True)
@@ -79,7 +91,6 @@ class FileCreator:
             weeks_dirs.append(week_directory)
             os.makedirs(week_directory, exist_ok=True)
         return chosen_month_directory, weeks_dirs
-
 
     def create_paths_for_days_txt_files(self):
         """creating path's for the days of the month"""
@@ -109,5 +120,3 @@ class FileCreator:
             except OSError as e:
                 print(f"File operation failed due to system-related errors.: {e}")
                 return None
-
-
