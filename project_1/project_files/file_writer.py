@@ -4,11 +4,12 @@ from file_opener import FileOpener
 
 class FileWriter(FileOpener):
 
-    def __init__(self, current_month=False):
-        super().__init__(current_month)
+    def __init__(self):
+        super().__init__()
         self.duties_list = []
 
     def __write_lines_to_file(self, added_lines_list, file_content_list):
+
         try:
             with open(self.todays_path, "a+", encoding="UTF-8") as f:
                 for line in added_lines_list:
@@ -21,7 +22,7 @@ class FileWriter(FileOpener):
             print("File operation failed due to system-related errors.")
 
     def __delete_lines_from_file(self):
-        file_content_list = self.read_todays_file()
+        file_content_list = self.read_today_file()
         try:
             line_number = int(input("Enter the line number to delete "))
 
@@ -49,9 +50,9 @@ class FileWriter(FileOpener):
     def file_content_management(self):
         """ write duties from list to file, without duplicates"""
         print("writing duties to a file")
-        print("Comand palette:\n---> write: Exit to exit\n---> write Del to delete lines")
+        print("Command palette:\n---> write: Exit to exit\n---> write Del to delete lines")
         added_lines_list = []
-        file_content_list = self.read_todays_file()
+        file_content_list = self.read_today_file()
         while True:
             tekst = input("enter text: ")
             if tekst == "exit" or tekst == "Exit":

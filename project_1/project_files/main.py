@@ -33,13 +33,11 @@ def main():
 
     # Execute based on user choice
     if choice == 1:
-        c_files = FileCreator()
+        c_files = FileCreator(create_files=True)
         c_files.create_txt_files_for_chosen_month()
 
     elif choice == 2:
-        print("HEREEE")
         w_files = FileWriter(current_month=True)
-        print(" HERE")
         w_files.file_content_management()
         w_files.read_todays_file()
 
@@ -54,3 +52,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+#jutro rozwiążę kolejny problem:
+# bład wynikający z tego że base_path potrzeba - ale nie mogę wywoływać w inicjalizatorze.

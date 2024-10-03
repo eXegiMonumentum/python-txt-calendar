@@ -4,19 +4,20 @@ import os
 
 class FileOpener(FileCreator):
 
-    def __init__(self, current_month=None):
-        super().__init__(current_month)
-        self.f_paths = self.create_paths_for_days_txt_files()
-        self.todays_path = self.f_paths[self.current_day_int - 1]
+    def __init__(self):
+        super().__init__()
 
-    def read_todays_file(self):
-        if self.current_month is not True:
+        self.f_paths = self.create_paths_for_days_txt_files()
+        self.today_path = self.f_paths[self.current_day_int - 1]
+
+    def read_today_file(self):
+        if not self.current_month:
             raise ValueError(f"Function read today's file only supports opening today's file when current_month=True.")
 
         print("It's today's file content:\n", 20 * "-")
         file_content_list = []
         try:
-            with open(self.todays_path, 'r', encoding='UTF-8') as f:
+            with open(self.today_path, 'r', encoding='UTF-8') as f:
                 file_content = f.read()
                 for i, line in enumerate(file_content.split("\n")):
                     if line:
