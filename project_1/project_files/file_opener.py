@@ -3,7 +3,6 @@ import os
 
 
 class FileOpener(FileCreator):
-
     def __init__(self, current_month=False):
         """ current_month == True if you want operating on current month."""
         super().__init__(current_month=current_month)
