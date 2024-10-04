@@ -5,7 +5,7 @@ import os
 
 
 class FileCreator:
-    base_path = None
+    base_path = r'C:\Users\LENOVO\Desktop\first_project_planner\project_1\created_planner'
     weeks_range = []
     chosen_month = datetime.datetime.now().strftime("%B")
 
@@ -15,7 +15,7 @@ class FileCreator:
 
     def __init__(self, current_month=False, create_files=False):
         """
-        If you want creates Python Planner in your path set create_giles = True.
+        To create Python Planner in your path set create_files = True.
         current_month = True means that user operate on current_month integer
         It helps to divide chosen month to weeks.
          If user set parameter on False then he should choose month"""
@@ -29,7 +29,7 @@ class FileCreator:
          User can enter base path - it's where he wants to create Pyhon Planner
          entered path is validated. """
 
-        if create_files and self.base_path is None:
+        if create_files:
             path_valid = PathValidator()
             FileCreator.base_path = path_valid.get_valid_directory_path()
 
@@ -140,8 +140,4 @@ class FileCreator:
             for alert in alerts:
                 print(alert)
 
-# C:\Users\LENOVO\Desktop\first_project_planner\project_1\project_files
 
-# This module allows to create txt. files for chosen month.
-# It divides month to weeks and days.
-# It's like calendar
