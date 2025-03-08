@@ -1,0 +1,22 @@
+# Ignore Python bytecode files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Ignore virtual environment folder (if any)
+venv/
+env/
+
+# Ignore created planner (it will contain planner files)
+created_planner/
+
+# Ignore IDE files (e.g., for PyCharm)
+.idea/
+
+# Ignore log files
+*.log
+
+# Ignore system files
+.DS_Store
+Thumbs.db

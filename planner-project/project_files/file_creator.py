@@ -4,8 +4,9 @@ import calendar
 import os
 
 
+
 class FileCreator:
-    base_path = r'C:\Users\LENOVO\Desktop\first_project_planner\project_1\created_planner'
+    base_path = "created_planner"
     weeks_range = []
     chosen_month = datetime.datetime.now().strftime("%B")
 
