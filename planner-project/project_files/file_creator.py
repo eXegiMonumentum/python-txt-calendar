@@ -4,15 +4,15 @@ import calendar
 import os
 
 
-
 class FileCreator:
-    base_path = "created_planner"
+    base_path = 'created_planner'
     weeks_range = []
-    chosen_month = datetime.datetime.now().strftime("%B")
+    chosen_month = datetime.datetime.now().strftime("%B") #default current month eg. March.
 
-    current_day_int = datetime.datetime.now().day
-    current_month_int = int(datetime.datetime.now().strftime("%m"))
-    current_year_int = int(datetime.datetime.now().strftime("%Y"))
+    now = datetime.datetime.now()
+    current_day_int = now.day
+    current_month_int = now.month
+    current_year_int = now.year
 
     def __init__(self, current_month=False, create_files=False):
         """
@@ -43,28 +43,29 @@ class FileCreator:
             weeks = [[1, 2, 3, 4, 5, 6, 7], ..., [29, 30, 31, 0, 0, 0, 0]]
 
         input:
-            chosen_month (int): The chosen month, e.g., "1" for chose January".
+            chosen_month (int): The chosen month, e.g., "1" for January.
         """
 
         months = list(calendar.month_name)[1:]
 
         if self.current_month:
             self.__month_number = self.current_month_int
-
         else:
             for i, month in enumerate(months, start=1):
                 print(f'{i:2}, --> {month}')
-            try:
-                self.__month_number = int(
-                    input(f"Enter the month number (1 to 12) of {self.current_year_int}r. you would like to chose: "))
-                if self.__month_number not in range(1, 13):
-                    raise ValueError("Month number must be between 1 and 12")
 
-            except ValueError as e:
-                print(f"Invalid input.{e}\n Please enter a valid month number.")
+            while True:
+                try:
+                    self.__month_number = int(input("Enter the month number (1-12): "))
+                    if 1 <= self.__month_number <= 12:
+                        break
+                    print("Invalid choice! Please enter a number between 1 and 12.")
+                except ValueError:
+                    print("Invalid input. Please enter a number.")
 
-        chosen_month = months[self.__month_number - 1]
-        weeks = calendar.monthcalendar(self.current_year_int, self.__month_number)
+        chosen_month = months[self.__month_number - 1]  # Pobranie nazwy miesiąca
+        weeks = calendar.monthcalendar(self.current_year_int, self.__month_number)  # Pobranie układu tygodni
+
         return chosen_month, weeks
 
     def __get_weeks_range(self):
@@ -140,5 +141,3 @@ class FileCreator:
         if alerts:
             for alert in alerts:
                 print(alert)
-
-

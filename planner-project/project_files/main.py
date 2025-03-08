@@ -24,7 +24,7 @@ def get_user_choice():
 def main():
     print("1: Schedule for new month.")
     print("2: Write something to today's file")
-    print("3: heck progress for chosen month")
+    print("3: Check progress for chosen month")
     print("4: Check progress for current month")
     print("5: Check progress for chosen week in current month")
     print("6: Read today's file")
