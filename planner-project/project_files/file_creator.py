@@ -49,7 +49,7 @@ class FileCreator:
         months = list(calendar.month_name)[1:]
 
         if self.current_month:
-            self.__month_number = self.current_month_int
+            self.__month_number = self.current_month_int  # aktualnego miesiąca
         else:
             for i, month in enumerate(months, start=1):
                 print(f'{i:2}, --> {month}')
