@@ -6,138 +6,107 @@ import os
 
 class FileCreator:
     base_path = 'created_planner'
-    weeks_range = []
-    chosen_month = datetime.datetime.now().strftime("%B") #default current month eg. March.
+    chosen_month = datetime.datetime.now().strftime("%B")  # Default: current month
 
     now = datetime.datetime.now()
     current_day_int = now.day
     current_month_int = now.month
     current_year_int = now.year
 
-    def __init__(self, current_month=False, create_files=False):
+    def __init__(self, current_month=False, create_files=False, chosen_month_number=None):
         """
-        To create Python Planner in your path set create_files = True.
-        current_month = True means that user operate on current_month integer
-        It helps to divide chosen month to weeks.
-         If user set parameter on False then he should choose month"""
-
+        Initializes the FileCreator class.
+        - current_month: If True, uses the current month. Otherwise, the user selects a month.
+        - create_files: If True, files are created in the validated directory.
+        - chosen_month_number: If provided, sets the month directly.
+        """
         self.current_month = current_month
-        self.__month_number = None
+        self.chosen_month_number = chosen_month_number if chosen_month_number else None
         self.__initialize_base_path(create_files=create_files)
 
     def __initialize_base_path(self, create_files=False):
-        """Initialization base_path at the class level.
-         User can enter base path - it's where he wants to create Pyhon Planner
-         entered path is validated. """
-
+        """Initializes the base path for file creation."""
         if create_files:
             path_valid = PathValidator()
             FileCreator.base_path = path_valid.get_valid_directory_path()
 
     def __divide_chosen_month_to_weeks(self):
-        """Creating a list of weeks for the chosen month,
-         where the 0th index represents Monday, the 1st index represents Tuesday, and so on.
-
-        Example:
-            For January:
-            weeks = [[1, 2, 3, 4, 5, 6, 7], ..., [29, 30, 31, 0, 0, 0, 0]]
-
-        input:
-            chosen_month (int): The chosen month, e.g., "1" for January.
-        """
-
+        """Divides the chosen month into weekly segments."""
         months = list(calendar.month_name)[1:]
 
         if self.current_month:
-            self.__month_number = self.current_month_int  # aktualnego miesiąca
-        else:
+            self.chosen_month_number = self.current_month_int
+        elif not self.chosen_month_number:
             for i, month in enumerate(months, start=1):
                 print(f'{i:2}, --> {month}')
 
             while True:
                 try:
-                    self.__month_number = int(input("Enter the month number (1-12): "))
-                    if 1 <= self.__month_number <= 12:
+                    self.chosen_month_number = int(input("Enter the month number (1-12): "))
+                    if 1 <= self.chosen_month_number <= 12:
                         break
                     print("Invalid choice! Please enter a number between 1 and 12.")
                 except ValueError:
                     print("Invalid input. Please enter a number.")
 
-        chosen_month = months[self.__month_number - 1]  # Pobranie nazwy miesiąca
-        weeks = calendar.monthcalendar(self.current_year_int, self.__month_number)  # Pobranie układu tygodni
+
+        chosen_month = months[self.chosen_month_number - 1]
+        weeks = calendar.monthcalendar(self.current_year_int, self.chosen_month_number)
 
         return chosen_month, weeks
 
     def __get_weeks_range(self):
-        """Create a list of tuples, which contain the range of days for each week of the selected month.
-
-            :returns:  chosen month (str) and weeks_range (list of tuples representing the range of days for each week
-            :Example: chosen_month = January, weeks range = [(1, 7), (8, 14), (15, 21), (22, 28), (29, 31)])
-            """
+        """Generates a list of tuples containing the start and end days of each week."""
         weeks_range = []
         chosen_month, weeks = self.__divide_chosen_month_to_weeks()
-        for i, week in enumerate(weeks, start=1):
-            week = list(filter(lambda x: x != 0, week))  # [29, 30, 31, 0, 0, 0, 0] modify to [29, 30, 31]
-            weeks_range.append((min(week), max(week)))  # (29, 30) last January week
-        self.__class__.weeks_range = weeks_range  # list of weeks range tuples
-        self.__class__.chosen_month = chosen_month
+        for week in weeks:
+            week = list(filter(lambda x: x != 0, week))  # Remove padding zeros
+            weeks_range.append((min(week), max(week)))
         return chosen_month, weeks_range
 
     def creating_chosen_month_and_weeks_directories(self):
-        """Creating directory for chosen month and
-           creating list of weeks directories for chosen month,
-           e.g. return: base_path_January, [base_path_January_1_week, ... , base_path_January_5_week]"""
-
+        """Creates directories for the selected month and its weeks."""
         chosen_month, weeks_range = self.__get_weeks_range()
         chosen_month_directory = os.path.join(self.base_path, chosen_month)
         os.makedirs(chosen_month_directory, exist_ok=True)
 
         weeks_dirs = []
-
         for i in range(1, len(weeks_range) + 1):
             dir_name = f'{i}_week'
-            week_directory = os.path.join(self.base_path, chosen_month, dir_name)
+            week_directory = os.path.join(chosen_month_directory, dir_name)
             os.makedirs(week_directory, exist_ok=True)
             weeks_dirs.append(week_directory)
 
-        return chosen_month_directory, weeks_dirs
+        return chosen_month_directory, weeks_dirs, weeks_range
 
     def create_paths_for_days_txt_files(self):
-        """creating list of path's for every day of chosen month"""
-
-        _, weeks_dirs = self.creating_chosen_month_and_weeks_directories()
-        weeks_iterator = 0
+        """Generates a list of file paths for each day of the selected month."""
+        _, weeks_dirs, weeks_range = self.creating_chosen_month_and_weeks_directories()
         f_paths = []
-        for week_index, week in enumerate(self.weeks_range, start=1):
-            start, end = week  # (1, 7) or (8, 14) etc.
+
+        for week_index, (start, end) in enumerate(weeks_range):
             for day in range(start, end + 1):
-                f_name = f'{day:02d}{self.current_month_int:02d}{self.current_year_int:04d}.txt'
-                f_paths.append(os.path.join(self.base_path, weeks_dirs[weeks_iterator], f_name))
-            if weeks_iterator < len(weeks_dirs):
-                weeks_iterator += 1
+                f_name = f'{day:02d}{self.chosen_month_number:02d}{self.current_year_int:04d}.txt'
+                f_paths.append(os.path.join(weeks_dirs[week_index], f_name))
+
         return f_paths
 
     def create_txt_files_for_chosen_month(self):
-        """for each day of the selected month will create a text file"""
+        """Creates text files for each day of the selected month."""
         f_paths = self.create_paths_for_days_txt_files()
         alerts = []
-        days = 0
+
         for path in f_paths:
             try:
-                days += 1
                 with open(path, 'x'):
                     print(f"Created {path}!")
-
             except FileExistsError:
-                alerts.append((days, f" File {path} already exist"))
-
-                if len(alerts) == len(f_paths):
-                    print(f"All days files for every week in {self.chosen_month}, already exists.")
-
+                alerts.append(f"File {path} already exists")
             except OSError as e:
-                print(f"File operation failed due to system-related errors.: {e}")
+                print(f"File operation failed due to system-related errors: {e}")
                 return None
 
         if alerts:
+            print("Some files already existed:")
             for alert in alerts:
                 print(alert)
