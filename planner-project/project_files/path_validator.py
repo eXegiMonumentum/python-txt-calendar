@@ -40,7 +40,7 @@ class PathValidator:
         """
         Prompts the user to enter a directory path and validates it.
         """
-        parent_path = Path.cwd()
+        parent_path = Path.cwd().parent
         base_path = parent_path / 'created_planner'
 
         while True:

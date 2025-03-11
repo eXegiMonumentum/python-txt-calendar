@@ -22,7 +22,7 @@ def get_user_choice():
 
 
 def main():
-    while True:
+
     print("1: Schedule for new month.")
     print("2: Write something to today's file")
     print("3: Check progress for chosen month")

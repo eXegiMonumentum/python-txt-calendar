@@ -20,3 +20,6 @@ created_planner/
 # Ignore system files
 .DS_Store
 Thumbs.db
+
+# testing file
+test
