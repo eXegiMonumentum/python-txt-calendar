@@ -3,98 +3,106 @@ import os
 
 
 class FileOpener(FileCreator):
+    """
+    Class responsible for reading planner files.
+    """
     def __init__(self, current_month=False):
-        """ current_month == True if you want operating on current month."""
+        """
+        Initializes FileOpener.
+        :param current_month: Determines if the operation is on the current month.
+        """
         super().__init__(current_month=current_month)
-
         self.f_paths = self.create_paths_for_days_txt_files()
-        self.today_path = self.f_paths[self.current_day_int - 1]
+        self.today_path = self.f_paths[self.current_day_int - 1] if self.current_month else None
 
     def read_today_file(self):
-        """ return file content list.- it's a list of records from txt files."""
-
+        """
+        Reads and prints today's file content.
+        :return: List of records from the text file or None in case of an error.
+        """
         if not self.current_month:
-            raise ValueError(f"Function read today's file only supports opening today's file when current_month=True.")
+            raise ValueError("read_today_file() can only be used when current_month=True.")
 
-        print("It's today's file content:\n")
-        file_content_list = []
+        if not os.path.exists(self.today_path):
+            print(f"File {self.today_path} does not exist! Please create a schedule.")
+            return None
+
         try:
             with open(self.today_path, 'r', encoding='UTF-8') as f:
-                file_content = f.read()
-                for i, line in enumerate(file_content.split("\n")):
-                    if line:
-                        file_content_list.append(line.strip())
-                        print(f'line {i + 1}: {line}')
-                print(20 * "-")
-                if not file_content_list:
-                    print(f"File {self.today_path} is empty. Please write sth in today file.")
-                return file_content_list
-
-        except FileNotFoundError as e:
-            print(f"Error opening file: {e}")
-            print("Please create schedule for current month.")
-            return None
+                lines = [line.strip() for line in f.readlines() if line.strip()]
+                if lines:
+                    print("Today's file content:")
+                    for i, line in enumerate(lines, start=1):
+                        print(f'{i}: {line}')
+                else:
+                    print(f"File {self.today_path} is empty. Please add content.")
+                return lines
         except OSError as e:
-            print(f"File operation failed due to system-related errors.: {e}")
+            print(f"File operation failed: {e}")
             return None
 
     def read_files_from_week_of_current_month(self):
+        """
+        Reads and displays text files from a selected week of the current month.
+        """
         if not self.current_month:
-            raise ValueError("Function read_files_from_week_of_current_month can only be used when current_month=True.")
+            raise ValueError("read_files_from_week_of_current_month() can only be used when current_month=True.")
 
         _, weeks_dirs = self.creating_chosen_month_and_weeks_directories()
 
-        print(f"Choose a week of {self.chosen_month} you want to check:")
+        print(f"Choose a week of {self.chosen_month} to check:")
         for i, week in enumerate(weeks_dirs, start=1):
             print(f'{i} --> {week[-6:]}')
 
-        choice = int(input("Enter the number of the week: "))
-        if choice < 1 or choice > len(weeks_dirs):
-            print("Invalid choice. Please choose a valid week number.")
+        try:
+            choice = int(input("Enter the week number: "))
+            if choice < 1 or choice > len(weeks_dirs):
+                print("Invalid choice. Please enter a valid week number.")
+                return
+        except ValueError:
+            print("Invalid input. Please enter an integer.")
             return
 
         path = weeks_dirs[choice - 1]
-        print(f"Content of {choice} week of {self.chosen_month}")
+        print(f"Content of week {choice} in {self.chosen_month}:")
 
         for filename in os.listdir(path):
-
             file_path = os.path.join(path, filename)
             if os.path.isfile(file_path) and filename.endswith('.txt'):
-                with open(file_path, 'r', encoding="UTF-8") as file:
-                    file_content = file.read()
-                    # if file_content:
-                    # if file_content:
-                    file_content = file_content.strip()
-                    file_content = file_content.split("\n")
-                    print(10 * "-", "Day", file_path[-12:-10], 10 * "-", )
-                    for i, line in enumerate(file_content, start=1):
-                        if line:
-                            print(f'{i}. {line}')
-                        else:
-                            print("empty ")
+                self._print_file_content(file_path)
 
     def read_files_from_chosen_month(self):
-        f_content_dict = {}
-        for i, day in enumerate(self.f_paths, start=1):
-            # cuts day number from f_path
-            key1 = f'{day[-12:-10]} {self.chosen_month}'
-            f_content_dict[key1] = {}
+        """
+        Reads and returns content from all files in the chosen month.
+        :return: Dictionary with file content.
+        """
+        file_contents = {}
+
+        for day_path in self.f_paths:
+            day_key = f'{day_path[-12:-10]} {self.chosen_month}'
+            file_contents[day_key] = {}
+
             try:
-                with open(day, 'r', encoding='UTF-8') as f:
-                    file_content = f.read()
-                    if file_content and os.path.exists(day):
-                        file_content = file_content.strip()
-                        file_content = file_content.split("\n")
-
-                        for index, single_line in enumerate(file_content, start=1):
-                            f_content_dict[key1][index] = single_line
-                    else:
-                        print(f"file for day {i}/{self.current_month_int}/{self.current_year_int} is empty")
-
-            except FileNotFoundError as e:
-                print(f"File from day {i} Does not exist.\n-- Please create schedule for chosen month. \nDetails: {e}")
+                if os.path.exists(day_path):
+                    with open(day_path, 'r', encoding='UTF-8') as f:
+                        lines = [line.strip() for line in f.readlines() if line.strip()]
+                        file_contents[day_key] = {i + 1: line for i, line in enumerate(lines)}
+                else:
+                    print(f"File for {day_key} does not exist. Please create a schedule.")
             except OSError as e:
-                print(f"File operation failed due to system-related errors.: {e}")
+                print(f"File operation failed: {e}")
 
-        return f_content_dict
+        return file_contents
 
+    def _print_file_content(self, file_path):
+        """
+        Prints the content of a file.
+        """
+        print(f"{'-' * 10} Day {file_path[-12:-10]} {'-' * 10}")
+        try:
+            with open(file_path, 'r', encoding='UTF-8') as f:
+                lines = [line.strip() for line in f.readlines() if line.strip()]
+                for i, line in enumerate(lines, start=1):
+                    print(f'{i}. {line}' if line else "(empty)")
+        except OSError as e:
+            print(f"Error reading file: {e}")
