@@ -5,6 +5,9 @@ import os
 
 
 class FileCreator:
+    """
+    Class responsible for creating and managing planner files.
+    """
     base_path = 'created_planner'
     chosen_month = datetime.datetime.now().strftime("%B")  # Default: current month
 
@@ -16,9 +19,9 @@ class FileCreator:
     def __init__(self, current_month=False, create_files=False, chosen_month_number=None):
         """
         Initializes the FileCreator class.
-        - current_month: If True, uses the current month. Otherwise, the user selects a month.
-        - create_files: If True, files are created in the validated directory.
-        - chosen_month_number: If provided, sets the month directly.
+        :param current_month: If True, uses the current month. Otherwise, the user selects a month.
+        :param create_files: If True, files are created in the validated directory.
+        :param chosen_month_number: If provided, sets the month directly.
         """
         self.current_month = current_month
         self.chosen_month_number = chosen_month_number if chosen_month_number else None
@@ -49,10 +52,8 @@ class FileCreator:
                 except ValueError:
                     print("Invalid input. Please enter a number.")
 
-
         chosen_month = months[self.chosen_month_number - 1]
         weeks = calendar.monthcalendar(self.current_year_int, self.chosen_month_number)
-
         return chosen_month, weeks
 
     def __get_weeks_range(self):
