@@ -1,6 +1,6 @@
 from file_creator import FileCreator
 import os
-
+import calendar
 
 class FileOpener(FileCreator):
     """
@@ -48,7 +48,7 @@ class FileOpener(FileCreator):
         if not self.current_month:
             raise ValueError("read_files_from_week_of_current_month() can only be used when current_month=True.")
 
-        _, weeks_dirs = self.creating_chosen_month_and_weeks_directories()
+        weeks_dirs, chosen_month_dir, weeks_range = self.creating_chosen_month_and_weeks_directories()
 
         print(f"Choose a week of {self.chosen_month} to check:")
         for i, week in enumerate(weeks_dirs, start=1):
@@ -65,7 +65,7 @@ class FileOpener(FileCreator):
 
         path = weeks_dirs[choice - 1]
         print(f"Content of week {choice} in {self.chosen_month}:")
-
+        print(path, "PAth")
         for filename in os.listdir(path):
             file_path = os.path.join(path, filename)
             if os.path.isfile(file_path) and filename.endswith('.txt'):
@@ -74,21 +74,38 @@ class FileOpener(FileCreator):
     def read_files_from_chosen_month(self):
         """
         Reads and returns content from all files in the chosen month.
+        If files do not exist, they are created first.
+
+        :param chosen_month_number: Number of the month chosen by the user (1-12)
         :return: Dictionary with file content.
         """
+
+        if self.chosen_month_number:
+            self.chosen_month = list(calendar.month_name)[self.chosen_month_number]
+
+            print(f" Changing to: {self.chosen_month} ({self.chosen_month_number})")
+            self.f_paths = []
+            self.f_paths = self.create_paths_for_days_txt_files()
+
+        print(f" Reading files for {self.chosen_month}...")
+
         file_contents = {}
+
+
+        if not self.f_paths or not all(os.path.exists(path) for path in self.f_paths):
+            print(f" Files for {self.chosen_month} do not exist. Creating schedule now...")
+            self.create_txt_files_for_chosen_month()
+            self.f_paths = self.create_paths_for_days_txt_files()
+
 
         for day_path in self.f_paths:
             day_key = f'{day_path[-12:-10]} {self.chosen_month}'
             file_contents[day_key] = {}
 
             try:
-                if os.path.exists(day_path):
-                    with open(day_path, 'r', encoding='UTF-8') as f:
-                        lines = [line.strip() for line in f.readlines() if line.strip()]
-                        file_contents[day_key] = {i + 1: line for i, line in enumerate(lines)}
-                else:
-                    print(f"File for {day_key} does not exist. Please create a schedule.")
+                with open(day_path, 'r', encoding='UTF-8') as f:
+                    lines = [line.strip() for line in f.readlines() if line.strip()]
+                    file_contents[day_key] = {i + 1: line for i, line in enumerate(lines)}
             except OSError as e:
                 print(f"File operation failed: {e}")
 

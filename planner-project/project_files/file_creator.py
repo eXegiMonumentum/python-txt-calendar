@@ -68,21 +68,20 @@ class FileCreator:
     def creating_chosen_month_and_weeks_directories(self):
         """Creates directories for the selected month and its weeks."""
         chosen_month, weeks_range = self.__get_weeks_range()
-        chosen_month_directory = os.path.join(self.base_path, chosen_month)
-        os.makedirs(chosen_month_directory, exist_ok=True)
+        chosen_month_dir = os.path.join(os.getcwd(), self.base_path, chosen_month)
 
         weeks_dirs = []
         for i in range(1, len(weeks_range) + 1):
             dir_name = f'{i}_week'
-            week_directory = os.path.join(chosen_month_directory, dir_name)
+            week_directory = os.path.join(chosen_month_dir, dir_name)
             os.makedirs(week_directory, exist_ok=True)
             weeks_dirs.append(week_directory)
 
-        return chosen_month_directory, weeks_dirs, weeks_range
+        return weeks_dirs, chosen_month_dir, weeks_range
 
     def create_paths_for_days_txt_files(self):
         """Generates a list of file paths for each day of the selected month."""
-        _, weeks_dirs, weeks_range = self.creating_chosen_month_and_weeks_directories()
+        weeks_dirs, chosen_month_dir, weeks_range = self.creating_chosen_month_and_weeks_directories()
         f_paths = []
 
         for week_index, (start, end) in enumerate(weeks_range):
@@ -106,8 +105,8 @@ class FileCreator:
             except OSError as e:
                 print(f"File operation failed due to system-related errors: {e}")
                 return None
-
-        if alerts:
-            print("Some files already existed:")
-            for alert in alerts:
-                print(alert)
+        #
+        # if alerts:
+        #     print("Some files already existed:")
+        #     for alert in alerts:
+        #         print(alert)
