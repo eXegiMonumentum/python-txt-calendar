@@ -21,5 +21,3 @@ created_planner/
 .DS_Store
 Thumbs.db
 
-# testing file
-planner-project/project_files/test.py
