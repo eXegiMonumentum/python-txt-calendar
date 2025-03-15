@@ -46,7 +46,17 @@ Projekt został napisany w **Pythonie** i wykorzystuje następujące moduły:
 3. **Uruchom aplikację**
    ```sh
    python main.py
-   
-   
+
+
+
+
+
+
+![Planner w akcji](https://raw.githubusercontent.com/eXegiMonumentum/python-txt-calendar/main/docs/animation.gif)
+
+
+
+
+
    
   
